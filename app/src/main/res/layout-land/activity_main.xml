@@ -8,7 +8,8 @@
         android:id="@+id/listview"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:divider="@android:color/transparent" />
 
     <FrameLayout
         android:layout_width="0dp"

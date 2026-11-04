@@ -53,11 +53,12 @@ public class MainActivity extends AppCompatActivity {
         Init();
     }
 
+
     private void AddUsersInList() {
-        users.add(new User("Софья Сергеева", "В сети", 18));
-        users.add(new User("Анна Миронова", "Занята", 20));
-        users.add(new User("Максим Орлов", "На занятиях", 18));
-        users.add(new User("Екатерина Волкова", "Доступна", 19));
+        users.add(new User("Софья Сергеева", "В сети", 18, 1));
+        users.add(new User("Анна Миронова", "Занята", 20, 2));
+        users.add(new User("Максим Орлов", "На занятиях", 18, 0));
+        users.add(new User("Екатерина Волкова", "Доступна", 19, 1));
     }
 
     private void Init() {
@@ -121,16 +122,28 @@ public class MainActivity extends AppCompatActivity {
 
             TextView nameView = currentView.findViewById(R.id.NameTextView);
             TextView stateView = currentView.findViewById(R.id.StateTextView);
+            FrameLayout stateRound = currentView.findViewById(R.id.StateRound);
 
             nameView.setText(currentUser.getName());
             stateView.setText(currentUser.getState());
+
+            switch (currentUser.getStateSignal()) {
+                case 0:
+                    stateRound.setBackgroundResource(R.drawable.back_offline);
+                    break;
+                case 1:
+                    stateRound.setBackgroundResource(R.drawable.back_online);
+                    break;
+                case 2:
+                    stateRound.setBackgroundResource(R.drawable.back_departed);
+                    break;
+            }
 
 
             currentView.setOnClickListener(v -> {
                 InitPanel(currentUser);
                 UserVisibility(true);
             });
-
 
             return currentView;
         }
