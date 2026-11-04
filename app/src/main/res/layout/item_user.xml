@@ -7,8 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:orientation="horizontal"
-        android:background="@drawable/back_smoke_round">
+        android:background="@drawable/back_smoke_round"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="75dp"
@@ -33,12 +33,14 @@
             <TextView
                 android:id="@+id/NameTextView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/NameText" />
 
             <TextView
                 android:id="@+id/StateTextView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/StateText" />
 
         </LinearLayout>
 

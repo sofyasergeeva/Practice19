@@ -27,8 +27,8 @@
         <Button
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="20dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="20dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/ic_baseline_edit_24"
             android:onClick="EditUser" />
@@ -42,17 +42,20 @@
             <TextView
                 android:id="@+id/NameTextView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/NameText" />
 
             <TextView
                 android:id="@+id/StateTextView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/StateText" />
 
             <TextView
                 android:id="@+id/AgeTextView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/BaseContainer" />
 
         </LinearLayout>
 

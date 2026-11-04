@@ -61,13 +61,12 @@ public class UserActivity extends AppCompatActivity {
         activeUser.setName(nameView.getText().toString());
         activeUser.setState(stateView.getText().toString());
 
-        String age = ageView.getText().toString();
+        int age = Transform.parseIntOrDefault(
+                ageView.getText().toString(),
+                activeUser.getAge()
+        );
 
-        try {
-            activeUser.setAge(Integer.parseInt(age));
-        } catch (NumberFormatException e) {
-            activeUser.setAge(activeUser.getAge());
-        }
+        activeUser.setAge(age);
 
         MainActivity.UpdateListAndUserPanel(activeUser);
         finish();
