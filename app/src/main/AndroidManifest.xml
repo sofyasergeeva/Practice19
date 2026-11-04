@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Practice19">
         <activity
+            android:name=".UserActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

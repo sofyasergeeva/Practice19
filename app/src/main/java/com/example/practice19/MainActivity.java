@@ -1,4 +1,3 @@
-
 package com.example.practice19;
 
 import android.os.Bundle;
@@ -15,16 +14,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import android.widget.FrameLayout;
-import java.util.ArrayList;
 import java.util.List;
+import android.content.Intent;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     LayoutInflater layoutInflater;
     FrameLayout userPanel;
-    List<User> users = new ArrayList<>();
-    UserListAdapter userListAdapter;
+    List<User> users = UserStaticInfo.users;
+    static UserListAdapter userListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +48,10 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        AddUsersInList();
+        new UserStaticInfo();
         Init();
     }
 
-
-    private void AddUsersInList() {
-        users.add(new User("Софья Сергеева", "В сети", 18, 1));
-        users.add(new User("Анна Миронова", "Занята", 20, 2));
-        users.add(new User("Максим Орлов", "На занятиях", 18, 0));
-        users.add(new User("Екатерина Волкова", "Доступна", 19, 1));
-    }
 
     private void Init() {
         listView = findViewById(R.id.listview);
@@ -91,7 +83,16 @@ public class MainActivity extends AppCompatActivity {
         ageView.setText(String.valueOf(user.getAge()));
     }
 
+    public void GoToUserProfile(int position) {
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra(UserStaticInfo.POSITION, position);
+        startActivity(intent);
+    }
 
+
+    public static void UpdateList() {
+        userListAdapter.notifyDataSetChanged();
+    }
 
     private class UserListAdapter extends BaseAdapter {
 
@@ -139,13 +140,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-
             currentView.setOnClickListener(v -> {
-                InitPanel(currentUser);
-                UserVisibility(true);
+                GoToUserProfile(position);
             });
 
             return currentView;
         }
+
     }
 }

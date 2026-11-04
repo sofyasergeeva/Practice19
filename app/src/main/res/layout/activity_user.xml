@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserActivity">
+
+    <Button
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/ic_baseline_keyboard_backspace_24"
+        android:onClick="Back" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/NameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="text"
+            android:hint="@string/nameHint" />
+
+        <EditText
+            android:id="@+id/StateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/stateHint" />
+
+    </LinearLayout>
+
+    <Button
+        android:background="@drawable/back_round_smoke_top"
+        android:backgroundTint="@null"
+        android:text="@string/save"
+        android:onClick="Save"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+
+</FrameLayout>
