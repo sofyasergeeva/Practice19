@@ -1,27 +1,29 @@
 package com.example.practice19;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import android.widget.FrameLayout;
 import java.util.List;
-import android.content.Intent;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     LayoutInflater layoutInflater;
-    FrameLayout userPanel;
+    static FrameLayout userPanel;
+    int positionActiveUser;
     List<User> users = UserStaticInfo.users;
     static UserListAdapter userListAdapter;
 
@@ -34,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(android.R.id.content),
                 (view, insets) -> {
-                    androidx.core.graphics.Insets systemBars =
-                            insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    Insets systemBars = insets.getInsets(
+                            WindowInsetsCompat.Type.systemBars()
+                    );
 
                     view.setPadding(
                             systemBars.left,
@@ -52,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         Init();
     }
 
-
     private void Init() {
         listView = findViewById(R.id.listview);
         layoutInflater = LayoutInflater.from(this);
@@ -63,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         userPanel = findViewById(R.id.userPanel);
     }
 
-
     public void BackToList(View view) {
         UserVisibility(false);
     }
@@ -72,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
         userPanel.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-
-    private void InitPanel(User user) {
+    private static void InitPanel(User user) {
         TextView nameView = userPanel.findViewById(R.id.NameTextView);
         TextView stateView = userPanel.findViewById(R.id.StateTextView);
         TextView ageView = userPanel.findViewById(R.id.AgeTextView);
@@ -89,9 +89,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void EditUser(View view) {
+        GoToUserProfile(positionActiveUser);
+    }
 
-    public static void UpdateList() {
+    public static void UpdateListAndUserPanel(User user) {
         userListAdapter.notifyDataSetChanged();
+        InitPanel(user);
     }
 
     private class UserListAdapter extends BaseAdapter {
@@ -141,11 +145,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             currentView.setOnClickListener(v -> {
-                GoToUserProfile(position);
+                positionActiveUser = position;
+                InitPanel(currentUser);
+                UserVisibility(true);
             });
 
             return currentView;
         }
-
     }
 }

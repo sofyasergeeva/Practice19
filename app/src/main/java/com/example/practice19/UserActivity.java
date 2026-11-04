@@ -15,6 +15,7 @@ public class UserActivity extends AppCompatActivity {
     private User activeUser;
     private EditText nameView;
     private EditText stateView;
+    private EditText ageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,11 @@ public class UserActivity extends AppCompatActivity {
 
         nameView = findViewById(R.id.NameTextView);
         stateView = findViewById(R.id.StateTextView);
+        ageView = findViewById(R.id.AgeTextView);
 
         nameView.setText(activeUser.getName());
         stateView.setText(activeUser.getState());
+        ageView.setText(String.valueOf(activeUser.getAge()));
 
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(android.R.id.content),
@@ -37,12 +40,14 @@ public class UserActivity extends AppCompatActivity {
                     Insets systemBars = insets.getInsets(
                             WindowInsetsCompat.Type.systemBars()
                     );
+
                     v.setPadding(
                             systemBars.left,
                             systemBars.top,
                             systemBars.right,
                             systemBars.bottom
                     );
+
                     return insets;
                 }
         );
@@ -55,7 +60,16 @@ public class UserActivity extends AppCompatActivity {
     public void Save(View view) {
         activeUser.setName(nameView.getText().toString());
         activeUser.setState(stateView.getText().toString());
-        MainActivity.UpdateList();
+
+        String age = ageView.getText().toString();
+
+        try {
+            activeUser.setAge(Integer.parseInt(age));
+        } catch (NumberFormatException e) {
+            activeUser.setAge(activeUser.getAge());
+        }
+
+        MainActivity.UpdateListAndUserPanel(activeUser);
         finish();
     }
 }

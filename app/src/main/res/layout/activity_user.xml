@@ -34,6 +34,14 @@
             android:layout_height="wrap_content"
             android:hint="@string/stateHint" />
 
+        <EditText
+            android:id="@+id/AgeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ageHint"
+            android:inputType="number" />
+
+
     </LinearLayout>
 
     <Button
