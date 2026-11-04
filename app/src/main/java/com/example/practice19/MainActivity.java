@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     LayoutInflater layoutInflater;
+    FrameLayout userPanel;
     List<User> users = new ArrayList<>();
     UserListAdapter userListAdapter;
 
@@ -64,7 +66,31 @@ public class MainActivity extends AppCompatActivity {
 
         userListAdapter = new UserListAdapter();
         listView.setAdapter(userListAdapter);
+
+        userPanel = findViewById(R.id.userPanel);
     }
+
+
+    public void BackToList(View view) {
+        UserVisibility(false);
+    }
+
+    private void UserVisibility(boolean visible) {
+        userPanel.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+
+    private void InitPanel(User user) {
+        TextView nameView = userPanel.findViewById(R.id.NameTextView);
+        TextView stateView = userPanel.findViewById(R.id.StateTextView);
+        TextView ageView = userPanel.findViewById(R.id.AgeTextView);
+
+        nameView.setText(user.getName());
+        stateView.setText(user.getState());
+        ageView.setText(String.valueOf(user.getAge()));
+    }
+
+
 
     private class UserListAdapter extends BaseAdapter {
 
@@ -98,6 +124,13 @@ public class MainActivity extends AppCompatActivity {
 
             nameView.setText(currentUser.getName());
             stateView.setText(currentUser.getState());
+
+
+            currentView.setOnClickListener(v -> {
+                InitPanel(currentUser);
+                UserVisibility(true);
+            });
+
 
             return currentView;
         }
