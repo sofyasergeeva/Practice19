@@ -6,6 +6,7 @@ import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,11 +20,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.example.practice19.UserStaticInfo.*;
 
 public class SignActivity extends AppCompatActivity {
 
+    private static final String DATABASE_URL =
+            "https://practice19-sofya-default-rtdb.europe-west1.firebasedatabase.app";
+
     private EditText LoginTextView, PasswordTextView;
+    private EditText NewLoginTextView, NewPasswordTextView;
+    private EditText NewAgeTextView, NewNameTextView, NewStateTextView;
+
+    private TabHost tabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +64,29 @@ public class SignActivity extends AppCompatActivity {
     }
 
     private void Init() {
+        tabHost = findViewById(R.id.tabHost);
+        tabHost.setup();
+
+        TabHost.TabSpec tabSpec = tabHost.newTabSpec("tag1");
+        tabSpec.setContent(R.id.tabSignIn);
+        tabSpec.setIndicator("Вход");
+        tabHost.addTab(tabSpec);
+
+        tabSpec = tabHost.newTabSpec("tag2");
+        tabSpec.setContent(R.id.tabSignUp);
+        tabSpec.setIndicator("Регистрация");
+        tabHost.addTab(tabSpec);
+
+        tabHost.setCurrentTab(0);
+
         LoginTextView = findViewById(R.id.LoginTextView);
         PasswordTextView = findViewById(R.id.PasswordTextView);
+
+        NewLoginTextView = findViewById(R.id.NewLoginTextView);
+        NewPasswordTextView = findViewById(R.id.NewPasswordTextView);
+        NewAgeTextView = findViewById(R.id.NewAgeTextView);
+        NewNameTextView = findViewById(R.id.NewNameTextView);
+        NewStateTextView = findViewById(R.id.NewStateTextView);
     }
 
     public void SignIn(View view) {
@@ -62,21 +94,11 @@ public class SignActivity extends AppCompatActivity {
         String password = PasswordTextView.getText().toString();
 
         if (login.isEmpty() || password.isEmpty()) {
-            Vibrate();
-
-            Toast.makeText(
-                    this,
-                    R.string.NullParametersMessage,
-                    Toast.LENGTH_SHORT
-            ).show();
-
+            ShowEmptyFields();
             return;
         }
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance(
-                "https://practice19-sofya-default-rtdb.europe-west1.firebasedatabase.app"
-        );
-
+        FirebaseDatabase database = FirebaseDatabase.getInstance(DATABASE_URL);
         DatabaseReference myRef = database.getReference(USERS_SIGN_IN_INFO)
                 .child(login);
 
@@ -87,10 +109,10 @@ public class SignActivity extends AppCompatActivity {
                         .getValue(String.class);
 
                 if (savedPassword != null && savedPassword.equals(password)) {
-                    Object profileIdValue = dataSnapshot.child(PROFILE_ID).getValue();
+                    Object id = dataSnapshot.child(PROFILE_ID).getValue();
 
-                    if (profileIdValue != null) {
-                        goNext(String.valueOf(profileIdValue));
+                    if (id != null) {
+                        goNext(String.valueOf(id));
                     } else {
                         CantSignIn();
                     }
@@ -101,31 +123,119 @@ public class SignActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(
-                        SignActivity.this,
-                        error.getMessage(),
-                        Toast.LENGTH_SHORT
-                ).show();
+                ShowDatabaseError(error);
             }
         });
+    }
+
+    private String getNewLogin() {
+        return NewLoginTextView.getText().toString().trim();
+    }
+
+    private String getNewPassword() {
+        return NewPasswordTextView.getText().toString();
+    }
+
+    private int getNewAge() {
+        return Transform.parseIntOrDefault(
+                NewAgeTextView.getText().toString(),
+                0
+        );
+    }
+
+    private String getNewName() {
+        return NewNameTextView.getText().toString().trim();
+    }
+
+    private String getNewState() {
+        return NewStateTextView.getText().toString().trim();
+    }
+
+    public void SignUp(View view) {
+        String login = getNewLogin();
+        String password = getNewPassword();
+        String name = getNewName();
+        String state = getNewState();
+
+        if (login.isEmpty() || password.isEmpty()
+                || name.isEmpty() || state.isEmpty()) {
+            ShowEmptyFields();
+            return;
+        }
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance(DATABASE_URL);
+
+        DatabaseReference profileRef = database
+                .getReference(USERS_PROFILE_INFO)
+                .push();
+
+        String id = profileRef.getKey();
+
+        if (id == null) {
+            Toast.makeText(this,
+                    "Не удалось создать профиль",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> profile = new HashMap<>();
+        profile.put(AGE, getNewAge());
+        profile.put(NAME, name);
+        profile.put(STATE, state);
+
+        Map<String, Object> signInInfo = new HashMap<>();
+        signInInfo.put(PASSWORD, password);
+        signInInfo.put(PROFILE_ID, id);
+
+        profileRef.setValue(profile).addOnSuccessListener(unused -> {
+            database.getReference(USERS_SIGN_IN_INFO)
+                    .child(login)
+                    .setValue(signInInfo)
+                    .addOnSuccessListener(result -> {
+                        goNext(id);
+
+                        Toast.makeText(this,
+                                "Пользователь зарегистрирован",
+                                Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(error ->
+                            ShowRegistrationError(error));
+        }).addOnFailureListener(error ->
+                ShowRegistrationError(error));
     }
 
     private void goNext(String profileId) {
         UserStaticInfo.profileId = profileId;
 
-        Toast.makeText(
-                this,
+        Toast.makeText(this,
                 "Вход выполнен успешно",
-                Toast.LENGTH_SHORT
-        ).show();
+                Toast.LENGTH_SHORT).show();
     }
 
     private void CantSignIn() {
-        Toast.makeText(
-                this,
+        Toast.makeText(this,
                 R.string.CantSignInMessage,
-                Toast.LENGTH_SHORT
-        ).show();
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void ShowEmptyFields() {
+        Vibrate();
+
+        Toast.makeText(this,
+                R.string.NullParametersMessage,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void ShowDatabaseError(DatabaseError error) {
+        Toast.makeText(this,
+                error.getMessage(),
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void ShowRegistrationError(Exception error) {
+        Toast.makeText(this,
+                "Ошибка регистрации: " + error.getMessage(),
+                Toast.LENGTH_LONG).show();
     }
 
     private void Vibrate() {

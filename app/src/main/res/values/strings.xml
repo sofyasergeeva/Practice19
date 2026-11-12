@@ -10,5 +10,6 @@
     <string name="goSignIn">Войти</string>
     <string name="NullParametersMessage">Не все поля заполнены!</string>
     <string name="CantSignInMessage">Неверный логин или пароль</string>
+    <string name="goSignUp">Зарегистрироваться</string>
 
 </resources>

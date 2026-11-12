@@ -5,44 +5,127 @@
     android:layout_height="match_parent"
     tools:context=".SignActivity">
 
-    <Button
+    <TabHost
+        android:id="@+id/tabHost"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/back_round_smoke_bot"
-        android:clickable="false"
-        android:text="@string/signIn" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/LoginTextView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/loginHint"
-            android:inputType="text"
-            android:maxLines="1" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/PasswordTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/passwordHint"
-            android:inputType="textPassword" />
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/back_round_smoke"
-            android:onClick="SignIn"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:text="@string/goSignIn" />
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    </LinearLayout>
+                <FrameLayout
+                    android:id="@+id/tabSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/LoginTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/loginHint"
+                            android:inputType="text"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+id/PasswordTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/passwordHint"
+                            android:inputType="textPassword" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/back_round_smoke"
+                            android:onClick="SignIn"
+                            android:paddingLeft="30dp"
+                            android:paddingRight="30dp"
+                            android:text="@string/goSignIn" />
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/tabSignUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/NewLoginTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/loginHint"
+                            android:inputType="text"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+id/NewPasswordTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/passwordHint"
+                            android:inputType="textPassword" />
+
+                        <EditText
+                            android:id="@+id/NewNameTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/nameHint"
+                            android:inputType="text"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+id/NewAgeTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/ageHint"
+                            android:inputType="number"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+id/NewStateTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/stateHint"
+                            android:inputType="text"
+                            android:maxLines="1" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/back_round_smoke"
+                            android:onClick="SignUp"
+                            android:paddingLeft="30dp"
+                            android:paddingRight="30dp"
+                            android:text="@string/goSignUp" />
+
+                    </LinearLayout>
+                </FrameLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
 </FrameLayout>
