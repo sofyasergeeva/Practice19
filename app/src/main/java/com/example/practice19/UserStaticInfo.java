@@ -9,6 +9,7 @@ public class UserStaticInfo {
 
     public final static String USERS_SIGN_IN_INFO = "UsersSignInInfo";
     public final static String USERS_PROFILE_INFO = "UsersProfileInfo";
+    public final static String LOGIN = "login";
     public final static String PASSWORD = "password";
     public final static String PROFILE_ID = "profileId";
     public final static String NAME = "name";

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Practice19</string>
+    <string name="app_name">Месседж</string>
     <string name="save">Сохранить</string>
     <string name="nameHint">Имя</string>
     <string name="stateHint">Статус</string>

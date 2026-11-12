@@ -1,5 +1,7 @@
 package com.example.practice19;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -25,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.practice19.Transform.APP_PREFERENCES;
+import static com.example.practice19.Transform.SaveUser;
 import static com.example.practice19.UserStaticInfo.*;
 
 public class SignActivity extends AppCompatActivity {
@@ -63,6 +67,7 @@ public class SignActivity extends AppCompatActivity {
         ViewCompat.requestApplyInsets(rootView);
 
         Init();
+        CheckSignInInfo();
     }
 
     private void Init() {
@@ -89,6 +94,19 @@ public class SignActivity extends AppCompatActivity {
         NewAgeTextView = findViewById(R.id.NewAgeTextView);
         NewNameTextView = findViewById(R.id.NewNameTextView);
         NewStateTextView = findViewById(R.id.NewStateTextView);
+    }
+
+    private void CheckSignInInfo() {
+        SharedPreferences sp = getSharedPreferences(
+                APP_PREFERENCES,
+                Context.MODE_PRIVATE
+        );
+
+        String login = sp.getString(LOGIN, "");
+        String password = sp.getString(PASSWORD, "");
+
+        LoginTextView.setText(login);
+        PasswordTextView.setText(password);
     }
 
     private boolean EditTextNoNullWithAnimation(EditText editText) {
@@ -134,7 +152,7 @@ public class SignActivity extends AppCompatActivity {
                     Object id = dataSnapshot.child(PROFILE_ID).getValue();
 
                     if (id != null) {
-                        goNext(String.valueOf(id));
+                        goNext(String.valueOf(id), login, password);
                     } else {
                         CantSignIn();
                     }
@@ -207,7 +225,6 @@ public class SignActivity extends AppCompatActivity {
                             R.string.UserExistMessage,
                             Toast.LENGTH_SHORT
                     ).show();
-
                     return;
                 }
 
@@ -263,8 +280,15 @@ public class SignActivity extends AppCompatActivity {
         });
     }
 
-    private void goNext(String profileId) {
+    private void goNext(String profileId, String login, String password) {
         UserStaticInfo.profileId = profileId;
+
+        SharedPreferences sp = getSharedPreferences(
+                APP_PREFERENCES,
+                Context.MODE_PRIVATE
+        );
+
+        SaveUser(sp, login, password);
 
         Toast.makeText(
                 this,
