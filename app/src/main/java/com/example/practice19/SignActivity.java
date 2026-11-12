@@ -97,6 +97,7 @@ public class SignActivity extends AppCompatActivity {
         NewStateTextView = findViewById(R.id.NewStateTextView);
     }
 
+
     private void CheckSignInInfo() {
         SharedPreferences sp = getSharedPreferences(
                 APP_PREFERENCES,
@@ -110,7 +111,7 @@ public class SignActivity extends AppCompatActivity {
         PasswordTextView.setText(password);
 
         if (!login.isEmpty() && !password.isEmpty()) {
-            SignIn(LoginTextView);
+            SignIn();
         }
     }
 
@@ -130,6 +131,10 @@ public class SignActivity extends AppCompatActivity {
     }
 
     public void SignIn(View view) {
+        SignIn();
+    }
+    private void SignIn() {
+
         boolean valid = true;
 
         valid &= EditTextNoNullWithAnimation(LoginTextView);
