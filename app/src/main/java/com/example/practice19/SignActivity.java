@@ -1,6 +1,7 @@
 package com.example.practice19;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -107,6 +108,10 @@ public class SignActivity extends AppCompatActivity {
 
         LoginTextView.setText(login);
         PasswordTextView.setText(password);
+
+        if (!login.isEmpty() && !password.isEmpty()) {
+            SignIn(LoginTextView);
+        }
     }
 
     private boolean EditTextNoNullWithAnimation(EditText editText) {
@@ -255,15 +260,9 @@ public class SignActivity extends AppCompatActivity {
                 profileRef.setValue(profile)
                         .addOnSuccessListener(unused -> {
                             signInRef.setValue(signInInfo)
-                                    .addOnSuccessListener(result -> {
-                                        UserStaticInfo.profileId = id;
-
-                                        Toast.makeText(
-                                                SignActivity.this,
-                                                "Пользователь зарегистрирован",
-                                                Toast.LENGTH_SHORT
-                                        ).show();
-                                    })
+                                    .addOnSuccessListener(result ->
+                                            goNext(id, login, password)
+                                    )
                                     .addOnFailureListener(
                                             error -> ShowRegistrationError(error)
                                     );
@@ -290,11 +289,13 @@ public class SignActivity extends AppCompatActivity {
 
         SaveUser(sp, login, password);
 
-        Toast.makeText(
+        Intent intent = new Intent(
                 this,
-                "Вход выполнен успешно",
-                Toast.LENGTH_SHORT
-        ).show();
+                LoadedUserDataActivity.class
+        );
+
+        startActivity(intent);
+        finish();
     }
 
     private void CantSignIn() {

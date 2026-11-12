@@ -13,4 +13,5 @@
     <string name="CantSignInMessage">Неверный логин или пароль</string>
     <string name="goSignUp">Зарегистрироваться</string>
     <string name="UserExistMessage">Пользователь существует</string>
+    <string name="loadingDescription">Анимированный логотип приложения</string>
 </resources>
