@@ -5,6 +5,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.Toast;
@@ -89,14 +91,34 @@ public class SignActivity extends AppCompatActivity {
         NewStateTextView = findViewById(R.id.NewStateTextView);
     }
 
-    public void SignIn(View view) {
-        String login = LoginTextView.getText().toString().trim();
-        String password = PasswordTextView.getText().toString();
+    private boolean EditTextNoNullWithAnimation(EditText editText) {
+        boolean hasText = !editText.getText().toString().trim().isEmpty();
 
-        if (login.isEmpty() || password.isEmpty()) {
+        if (!hasText) {
+            Animation animation = AnimationUtils.loadAnimation(
+                    this,
+                    R.anim.error_edit
+            );
+
+            editText.startAnimation(animation);
+        }
+
+        return hasText;
+    }
+
+    public void SignIn(View view) {
+        boolean valid = true;
+
+        valid &= EditTextNoNullWithAnimation(LoginTextView);
+        valid &= EditTextNoNullWithAnimation(PasswordTextView);
+
+        if (!valid) {
             ShowEmptyFields();
             return;
         }
+
+        String login = LoginTextView.getText().toString().trim();
+        String password = PasswordTextView.getText().toString();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(DATABASE_URL);
         DatabaseReference myRef = database.getReference(USERS_SIGN_IN_INFO)
@@ -152,90 +174,137 @@ public class SignActivity extends AppCompatActivity {
     }
 
     public void SignUp(View view) {
-        String login = getNewLogin();
-        String password = getNewPassword();
-        String name = getNewName();
-        String state = getNewState();
+        boolean valid = true;
 
-        if (login.isEmpty() || password.isEmpty()
-                || name.isEmpty() || state.isEmpty()) {
+        valid &= EditTextNoNullWithAnimation(NewLoginTextView);
+        valid &= EditTextNoNullWithAnimation(NewPasswordTextView);
+        valid &= EditTextNoNullWithAnimation(NewNameTextView);
+        valid &= EditTextNoNullWithAnimation(NewStateTextView);
+
+        if (!valid) {
             ShowEmptyFields();
             return;
         }
 
+        String login = getNewLogin();
+        String password = getNewPassword();
+        String name = getNewName();
+        String state = getNewState();
+        int age = getNewAge();
+
         FirebaseDatabase database = FirebaseDatabase.getInstance(DATABASE_URL);
 
-        DatabaseReference profileRef = database
-                .getReference(USERS_PROFILE_INFO)
-                .push();
+        DatabaseReference signInRef = database
+                .getReference(USERS_SIGN_IN_INFO)
+                .child(login);
 
-        String id = profileRef.getKey();
+        signInRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Toast.makeText(
+                            SignActivity.this,
+                            R.string.UserExistMessage,
+                            Toast.LENGTH_SHORT
+                    ).show();
 
-        if (id == null) {
-            Toast.makeText(this,
-                    "Не удалось создать профиль",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
+                    return;
+                }
 
-        Map<String, Object> profile = new HashMap<>();
-        profile.put(AGE, getNewAge());
-        profile.put(NAME, name);
-        profile.put(STATE, state);
+                DatabaseReference profileRef = database
+                        .getReference(USERS_PROFILE_INFO)
+                        .push();
 
-        Map<String, Object> signInInfo = new HashMap<>();
-        signInInfo.put(PASSWORD, password);
-        signInInfo.put(PROFILE_ID, id);
+                String id = profileRef.getKey();
 
-        profileRef.setValue(profile).addOnSuccessListener(unused -> {
-            database.getReference(USERS_SIGN_IN_INFO)
-                    .child(login)
-                    .setValue(signInInfo)
-                    .addOnSuccessListener(result -> {
-                        goNext(id);
+                if (id == null) {
+                    Toast.makeText(
+                            SignActivity.this,
+                            "Не удалось создать профиль",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    return;
+                }
 
-                        Toast.makeText(this,
-                                "Пользователь зарегистрирован",
-                                Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(error ->
-                            ShowRegistrationError(error));
-        }).addOnFailureListener(error ->
-                ShowRegistrationError(error));
+                Map<String, Object> profile = new HashMap<>();
+                profile.put(AGE, age);
+                profile.put(NAME, name);
+                profile.put(STATE, state);
+
+                Map<String, Object> signInInfo = new HashMap<>();
+                signInInfo.put(PASSWORD, password);
+                signInInfo.put(PROFILE_ID, id);
+
+                profileRef.setValue(profile)
+                        .addOnSuccessListener(unused -> {
+                            signInRef.setValue(signInInfo)
+                                    .addOnSuccessListener(result -> {
+                                        UserStaticInfo.profileId = id;
+
+                                        Toast.makeText(
+                                                SignActivity.this,
+                                                "Пользователь зарегистрирован",
+                                                Toast.LENGTH_SHORT
+                                        ).show();
+                                    })
+                                    .addOnFailureListener(
+                                            error -> ShowRegistrationError(error)
+                                    );
+                        })
+                        .addOnFailureListener(
+                                error -> ShowRegistrationError(error)
+                        );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ShowDatabaseError(error);
+            }
+        });
     }
 
     private void goNext(String profileId) {
         UserStaticInfo.profileId = profileId;
 
-        Toast.makeText(this,
+        Toast.makeText(
+                this,
                 "Вход выполнен успешно",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void CantSignIn() {
-        Toast.makeText(this,
+        Toast.makeText(
+                this,
                 R.string.CantSignInMessage,
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void ShowEmptyFields() {
         Vibrate();
 
-        Toast.makeText(this,
+        Toast.makeText(
+                this,
                 R.string.NullParametersMessage,
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void ShowDatabaseError(DatabaseError error) {
-        Toast.makeText(this,
+        Toast.makeText(
+                this,
                 error.getMessage(),
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void ShowRegistrationError(Exception error) {
-        Toast.makeText(this,
+        Toast.makeText(
+                this,
                 "Ошибка регистрации: " + error.getMessage(),
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_LONG
+        ).show();
     }
 
     private void Vibrate() {
